@@ -1,0 +1,8 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+.calcite-nav-bottom .calcite-map .leaflet-control-zoom {
+  margin-top: 50px;
+}
