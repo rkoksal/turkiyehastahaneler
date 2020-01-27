@@ -1,16 +1,179 @@
-<nav class="navbar calcite-navbar navbar-fixed-top calcite-text-light calcite-bg-dark calcite-bgcolor-gray">
-  <div class="calcite-title calcite-overflow-hidden">
-<div class="navbar-header">
-      <a class="navbar-brand" role="button" id="calciteToggleNavbar" aria-haspopup="true">
-        <span class="esri-icon esri-icon-map-pin"></span>
-      </a>
-    </div>
-    <span class="calcite-title-main">Turkiye Hastahaneler</span>
-    <span class="calcite-title-divider hidden-xs"></span>
-    <span class="calcite-title-sub hidden-xs">T�rkiye Hastahane Dagilimi</span>
-  </div>
-</nav>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Turkiye Hastahaneler Guncel</title>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
 
-<div class="calcite-map">
-  <div id="map" class="calcite-map-absolute"></div>
-</div>
+ <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+  crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+  integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+  crossorigin=""></script>
+
+
+ <script src="https://unpkg.com/esri-leaflet@2.3.2/dist/esri-leaflet.js"
+  integrity="sha512-6LVib9wGnqVKIClCduEwsCub7iauLXpwrd5njR2J507m3A2a4HXJDLMiSZzjcksag3UluIfuW1KzuWVI5n/cuQ=="
+  crossorigin=""></script>
+
+<link rel="stylesheet" type="text/css"
+    href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css"
+    integrity="sha512-BBToHPBStgMiw0lD4AtkRIZmdndhB6aQbXpX7omcrXeG2PauGBl2lzq2xUZTxaLxYz5IDHlmneCZ1IJ+P3kYtQ=="
+    crossorigin="">
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css"
+    integrity="sha512-RLEjtaFGdC4iQMJDbMzim/dOvAu+8Qp9sw7QE4wIMYcg2goVoivzwgSZq9CsIxp4xKAZPKh5J2f2lOko2Ze6FQ=="
+    crossorigin="">
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"
+    integrity="sha512-MQlyPV+ol2lp4KodaU/Xmrn+txc1TP15pOBF/2Sfre7MRsA/pB4Vy58bEqe9u7a7DczMLtU5wT8n7OblJepKbg=="
+    crossorigin=""></script>
+  <script src="https://unpkg.com/esri-leaflet-cluster@2.0.1/dist/esri-leaflet-cluster.js"
+    integrity="sha512-2/Nwrks+A2omjKeWrF4TKFLIrUbAhSl8EDEm6xunuwXXYqMoJI71PZtlW0/vqt9d3DOyP1md/bzAnNH2KuAhaQ=="
+    crossorigin=""></script>
+
+  <style>
+    body { margin:0; padding:0; }
+    #map { position: absolute; top:0; bottom:0; right:0; left:0; }
+  </style>
+</head>
+<body>
+<style>
+  .cluster {
+    background: #2d84c8;
+    border-radius: 50%;
+    text-align: center;
+    color: white;
+    font-weight: 700;
+    border: 1px solid #2d84c8;
+    font-family: monospace;
+  }
+
+  .cluster:before {
+    content: ' ';
+    position: absolute;
+    border-radius: 50%;
+    z-index: -1;
+    top: 1px;
+    left: 1px;
+    right: 1px;
+    bottom: 1px;
+    border: 1px solid white;
+  }
+
+  .digits-1 {
+    font-size: 14px;
+    height: 28px;
+    width: 28px;
+    line-height: 28px;
+    margin-top: -14px;
+    margin-left: -14px;
+  }
+
+  .digits-2 {
+    font-size: 16px;
+    height: 34px;
+    width: 34px;
+    line-height: 35px;
+    margin-top: -17px;
+    margin-left: -17px;
+  }
+
+  .digits-2:before {
+    border-width: 2px;
+  }
+
+  .digits-3 {
+    font-size: 18px;
+    height: 48px;
+    width: 47px;
+    line-height: 47px;
+    border-width: 3px;
+    margin-top: -24px;
+    margin-left: -24px;
+  }
+
+  .digits-3:before {
+    border-width: 3px;
+  }
+
+  .digits-4 {
+    font-size: 18px;
+    height: 58px;
+    width: 58px;
+    line-height: 57px;
+    border-width: 4px;
+    margin-top: -29px;
+    margin-left: -29px;
+  }
+
+  .digits-4:before {
+    border-width: 4px;
+  }
+</style>
+
+  
+
+<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+
+
+<script src="https://unpkg.com/esri-leaflet-heatmap@2.0.0"></script>
+
+<div id="map"></div>
+
+<script>
+  var map = L.map('map').setView([36.843098, 30.599675], 12);
+
+  L.esri.basemapLayer('Gray').addTo(map);
+  L.layerGroup();
+
+  
+  L.esri.Heat.featureLayer({
+    url: 'https://services7.arcgis.com/hXiQc9C4mxzB1RqF/ArcGIS/rest/services/Hastaneler/FeatureServer/0',
+    radius: 10
+  }).addTo(map);
+  var Hastahane = L.esri.Cluster.featureLayer({
+    url: 'https://services7.arcgis.com/hXiQc9C4mxzB1RqF/ArcGIS/rest/services/Hastaneler_FeaturesToJSON_2/FeatureServer/0',
+    spiderfyOnMaxZoom: false,
+    removeOutsideVisibleBounds: true,
+    disableClusteringAtZoom: 15,
+    
+    iconCreateFunction: function (cluster) {
+   
+      var count = cluster.getChildCount();
+
+      var digits = (count + '').length;
+
+  
+      return L.divIcon({
+        html: count,
+        className: 'cluster digits-' + digits,
+        iconSize: null
+      });
+    },
+   
+    pointToLayer: function (geojson, latlng) {
+      var Hastahane = (geojson.properties.Hastahane);
+      var hastahanesembol = '';
+
+      if (!Hastahane) {
+        hastahanesembol = 'https://raw.githubusercontent.com/rkoksal/turkiyehastahaneler/master/hospital-icon.png';
+      }  
+
+      var mapIcon = L.icon({
+        iconUrl: hastahanesembol,
+        iconSize: [20, 20]
+      });
+
+      return L.marker(latlng, {
+        icon: mapIcon
+      });
+    }
+  }).addTo(map);
+
+  Hastahane.bindPopup(function (layer) {
+    return L.Util.template('Hastahane  <strong>{Hastahane }</strong> Adı', layer.feature.properties);
+  });
+</script>
+
+</body>
+</html>
+##Recep Köksal
