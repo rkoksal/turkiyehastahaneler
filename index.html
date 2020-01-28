@@ -1,8 +1,10 @@
-<html>
-<head>
-  <meta charset="utf-8" />
+
+<div class="calcite-map">
+  <div id="map" class="calcite-map-absolute"></div>
+</div>
   <title>Turkiye Hastahaneler Guncel</title>
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  
 
  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
@@ -32,18 +34,31 @@
 
   <style>
     body { margin:0; padding:0; }
+    
     #map { position: absolute; top:0; bottom:0; right:0; left:0; }
   </style>
 </head>
 <body>
 <style>
+ 
+  #basemaps-wrapper {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 400;
+    background: white;
+    padding: 10px;
+  }
+  #basemaps {
+    margin-bottom: 5px;
+  }
   .cluster {
-    background: #2d84c8;
+    background:#24102F;
     border-radius: 50%;
     text-align: center;
-    color: white;
+    color: #E5E5E5;
     font-weight: 700;
-    border: 1px solid #2d84c8;
+    border: 1px solid #79369F;
     font-family: monospace;
   }
 
@@ -109,9 +124,21 @@
     border-width: 4px;
   }
 </style>
-
+<div id="basemaps-wrapper" class="leaflet-bar">
+  <select id="basemaps">
+    <option value="Gray">Gri</option>
+    <option value="Topographic">Topografik</option>
+    <option value="Streets">Sokak</option>
+    <option value="NationalGeographic">National Geographic</option>
+    <option value="Oceans">Okyanus</option>
+    
+    <option value="DarkGray">Siyah</option>
+    ## option value="Imagery">Uydu</option>
+    <option value="Physical">Fiziki Harita</option>
+  </select>
   
-
+</div>
+  
 <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 
 
@@ -120,18 +147,63 @@
 <div id="map"></div>
 
 <script>
-  var map = L.map('map').setView([39.521357, 35.499711], 7);
+  var map = L.map('map').setView([36.843098, 30.599675], 7);
+    var layer = L.esri.basemapLayer('Gray').addTo(map);
+  var layerLabels;
+  
+   function setBasemap (basemap) {
+    if (layer) {
+      map.removeLayer(layer);
+    }
+
+    layer = L.esri.basemapLayer(basemap);
+
+    map.addLayer(layer);
+
+    if (layerLabels) {
+      map.removeLayer(layerLabels);
+    }
+
+    if (
+      basemap === 'ShadedRelief' ||
+      basemap === 'Oceans' ||
+      basemap === 'Gray' ||
+      basemap === 'DarkGray' ||
+      basemap === 'Terrain'
+    ) {
+      layerLabels = L.esri.basemapLayer(basemap + 'Labels');
+      map.addLayer(layerLabels);
+    } else if (basemap.includes('Imagery')) {
+      layerLabels = L.esri.basemapLayer('ImageryLabels');
+      map.addLayer(layerLabels);
+    }
+  }
+
+  document
+    .querySelector('#basemaps')
+    .addEventListener('change', function (e) {
+      var basemap = e.target.value;
+      setBasemap(basemap);
+    });
 
   L.esri.basemapLayer('Gray').addTo(map);
   L.layerGroup();
 
   
   L.esri.Heat.featureLayer({
-    url: 'https://services7.arcgis.com/hXiQc9C4mxzB1RqF/ArcGIS/rest/services/Hastaneler/FeatureServer/0',
-    radius: 10
+    url: 'https://services7.arcgis.com/hXiQc9C4mxzB1RqF/ArcGIS/rest/services/Hastahane2/FeatureServer/0',
+    radius: 20,
+ solid: {
+      0.2: '#724e86',
+      0.4: '#613877',
+      0.6: '#502368',
+      0.8: '#381848',
+      1: '#281134'
+    }
+    
   }).addTo(map);
   var Hastahane = L.esri.Cluster.featureLayer({
-    url: 'https://services7.arcgis.com/hXiQc9C4mxzB1RqF/ArcGIS/rest/services/Hastaneler_FeaturesToJSON_2/FeatureServer/0',
+    url: 'https://services7.arcgis.com/hXiQc9C4mxzB1RqF/ArcGIS/rest/services/Hastahane2/FeatureServer/0',
     spiderfyOnMaxZoom: false,
     removeOutsideVisibleBounds: true,
     disableClusteringAtZoom: 15,
@@ -170,10 +242,11 @@
   }).addTo(map);
 
   Hastahane.bindPopup(function (layer) {
-    return L.Util.template('Hastahane  <strong>{Hastahane }</strong> Adı', layer.feature.properties);
+    return L.Util.template('Adı:  <strong>{Hastahane }</strong> ', 
+                           layer.feature.properties);
   });
+  
 </script>
-
 </body>
 </html>
 ##Recep Köksal
