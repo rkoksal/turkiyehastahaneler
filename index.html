@@ -2,7 +2,7 @@
 <div class="calcite-map">
   <div id="map" class="calcite-map-absolute"></div>
 </div>
-  <title>Turkiye Hastahaneler</title>
+  <title>Turkiye Hastahaneler Guncel</title>
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
   
 
@@ -38,8 +38,10 @@
     #map { position: absolute; top:0; bottom:0; right:0; left:0; }
   </style>
 </head>
-<body>
+<>
 <style>
+  
+  
  
   #basemaps-wrapper {
     position: absolute;
@@ -136,7 +138,6 @@
     ## option value="Imagery">Uydu</option>
     <option value="Physical">Fiziki Harita</option>
   </select>
-  
 </div>
   
 <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
@@ -147,7 +148,7 @@
 <div id="map"></div>
 
 <script>
-  var map = L.map('map').setView([39.454377, 35.806547], 7);
+  var map = L.map('map').setView([36.843098, 30.599675], 7);
     var layer = L.esri.basemapLayer('Gray').addTo(map);
   var layerLabels;
   
@@ -188,10 +189,9 @@
 
   L.esri.basemapLayer('Gray').addTo(map);
   L.layerGroup();
-
   
   L.esri.Heat.featureLayer({
-    url: 'https://services7.arcgis.com/hXiQc9C4mxzB1RqF/ArcGIS/rest/services/Hastahane/FeatureServer/0',
+    url: 'https://services7.arcgis.com/hXiQc9C4mxzB1RqF/ArcGIS/rest/services/Hastahane2/FeatureServer/0',
     radius: 20,
  solid: {
       0.2: '#724e86',
@@ -203,7 +203,7 @@
     
   }).addTo(map);
   var Hastahane = L.esri.Cluster.featureLayer({
-    url: 'https://services7.arcgis.com/hXiQc9C4mxzB1RqF/ArcGIS/rest/services/Hastahane/FeatureServer/0',
+    url: 'https://services7.arcgis.com/hXiQc9C4mxzB1RqF/ArcGIS/rest/services/Hastahane2/FeatureServer/0',
     spiderfyOnMaxZoom: false,
     removeOutsideVisibleBounds: true,
     disableClusteringAtZoom: 15,
